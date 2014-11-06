@@ -1,29 +1,33 @@
 package ca.ualberta.cs.cmput301f14t14.questionapp;
 
+import java.util.List;
+import java.util.UUID;
+
 import ca.ualberta.cs.cmput301f14t14.questionapp.data.DataManager;
-import ca.ualberta.cs.cmput301f14t14.questionapp.view.AddAnswerDialogFragment;
-import ca.ualberta.cs.cmput301f14t14.questionapp.view.AddCommentDialogFragment;
+import ca.ualberta.cs.cmput301f14t14.questionapp.model.Question;
 import ca.ualberta.cs.cmput301f14t14.questionapp.view.AddQuestionDialogFragment;
+import ca.ualberta.cs.cmput301f14t14.questionapp.view.QuestionListAdapter;
 import android.app.ActionBar;
 import android.app.ActionBar.OnNavigationListener;
 import android.app.Activity;
+import android.app.FragmentManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.Toast;
-
 
 public class MainActivity extends Activity {
 
 	private DataManager dataManager;
-	
+	private QuestionListAdapter qla = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
        	setContentView(R.layout.activity_main);
        
         //Create a spinner adapter for sorting choices
@@ -47,12 +51,20 @@ public class MainActivity extends Activity {
         	startActivityForResult(intent, Activity.RESULT_FIRST_USER);
         }
         
-        /* Set a listener for the Add Question button so it loads the add question dialog fragment */
-        findViewById(R.id.action_add_question).setOnClickListener(new View.OnClickListener() {
+        List<Question> qList = dataManager.load();
+        qla = new QuestionListAdapter(this, R.layout.list_question, qList);  
+        ListView questionView = (ListView) findViewById(R.id.question_list);
+        questionView.setAdapter(qla);
+        questionView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
 			@Override
-			public void onClick(View v) {
-				AddQuestionDialogFragment aqdf = new AddQuestionDialogFragment();
-				aqdf.show(getFragmentManager(), "AddQuestionDF");
+			public void onItemClick(AdapterView<?> parent, View view,
+					int position, long id) {
+				final Question question = qla.getItem(position);
+				UUID qId = question.getId();
+				Intent intent = new Intent(getApplicationContext(), QuestionActivity.class);
+				intent.putExtra("QUESTION_UUID", qId.toString());
+				startActivity(intent);
 			}
 		});
     }
@@ -87,14 +99,6 @@ public class MainActivity extends Activity {
         switch (id) {
 	        case R.id.action_settings:
 	        	return true;
-	        case R.id.dummy_add_answer:
-	        	AddAnswerDialogFragment aadf = new AddAnswerDialogFragment();
-	        	aadf.show(getFragmentManager(), "AddAnswerDF");
-	        	break;
-	        case R.id.dummy_answerview:
-	        	Intent intent = new Intent(this.getBaseContext(), AnswerViewActivity.class);
-	        	startActivity(intent);
-	        	break;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -110,11 +114,15 @@ public class MainActivity extends Activity {
     	
     }
     
-    /* TODO: Add the Callback needed for AddQuestionDialogFragment to actually do something */
-    /* TODO: Add the callback needed for AddAnswerDialogFragment to do something. 
-     * this callback should take into account where the AddAnswerDialogFragment was called from 
-     * 
-     * Should be in the QuestionActivity. (and the .show() call too)
-     * */
-     
+    public void addQuestion(View view){
+    	FragmentManager fm = getFragmentManager();
+    	AddQuestionDialogFragment aQ = new AddQuestionDialogFragment();
+    	aQ.show(fm, "addquestiondialogfragmentlayout");
+    }
+    
+    public void updateList(Question q) {
+    	qla.add(q);
+    	qla.update();
+    	Toast.makeText(getApplicationContext(), "Question successfully added", Toast.LENGTH_LONG).show();
+    }
 }

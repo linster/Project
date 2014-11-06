@@ -42,6 +42,7 @@ public class DataManager {
 	public void addQuestion(Question validQ) {
 		questionList = localDataStore.getQuestionList();
 		questionList.add(validQ);
+		localDataStore.putQuestion(validQ);
 		localDataStore.save();
 		
 	}
@@ -64,6 +65,7 @@ public class DataManager {
 		Question question = getQuestion(Qid);
 		Integer position = questionList.indexOf(question);
 		question.addAnswer(A);
+		localDataStore.putAnswer(A);
 		questionList.set(position, question);
 		localDataStore.save();
 	}
@@ -81,6 +83,7 @@ public class DataManager {
 		Integer position = questionList.indexOf(question);
 		question.addComment(C);
 		questionList.set(position, question);
+		localDataStore.putQComment(C);
 		localDataStore.save();
 	}
 
@@ -99,6 +102,7 @@ public class DataManager {
 		answer.addComment(C);
 		question.setAnswer(Aid,answer);
 		questionList.set(position, question);
+		localDataStore.putAComment(C);
 		localDataStore.save();
 	}
 	
@@ -138,41 +142,27 @@ public class DataManager {
 		clientData.setUsername(username);
 	}
 
-	//End View Interface
 	
-	public void disableNetworkAccess() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void enableNetworkAccess() {
-		// TODO Auto-generated method stub
-		
-	}
-	
-	public int getItemCount() {
-		return 0;}
-	
-	public List<Model> getItems() { return null;}
-
-
-
 	public void readLater(Question q) {
-		// TODO Auto-generated method stub
-		
+		// TODO Auto-generated method stub	
 	}
 
 	public void readLater(Answer mAnswer) {
 		// TODO Auto-generated method stub
 	}
-
-	public Comment<? extends Model> getComment(UUID id) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 	
 	public void clearClientData() {
 		clientData.clear();
+	}
+	
+	public Question getReadLaterQuestion(UUID qId){
+		if(readLater.contains(qId)){
+			
+			return getQuestion(qId);
+		}
+		else{
+			throw new NullPointerException("id is not in the list");
+		}
 	}
 
 }

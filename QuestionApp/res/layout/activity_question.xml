@@ -24,6 +24,13 @@
         android:text="Small Text"
         android:textAppearance="?android:attr/textAppearanceSmall" />
 
+    <TextView
+        android:id="@+id/questionUser"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="UserName"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+
     <ImageView
         android:id="@+id/questionImage"
         android:layout_width="wrap_content"
@@ -32,8 +39,8 @@
 
     <TabHost
         android:id="@android:id/tabhost"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" >
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" >
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -67,5 +74,10 @@
 
         </LinearLayout>
     </TabHost>
-
+    <Button
+        android:id="@+id/action_add_answer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="addAnswer"
+        android:text="@string/question_add_answer" />
 </LinearLayout>
